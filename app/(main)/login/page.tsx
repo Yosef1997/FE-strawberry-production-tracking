@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Form } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import FormFieldInput from '@/components/FormFieldInput'
+import { login } from '@/actions/auth'
+import { toast } from '@/hooks/use-toast'
 
 const loginSchema = z.object({
   username: z.string().min(4, {
@@ -24,8 +26,31 @@ const Login = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: FormData) {
     console.log(values)
+    try {
+      login(values)
+        .then(() => {
+          toast({
+            description: 'Login success',
+          })
+          form.reset()
+        })
+        .catch(() => {
+          toast({
+            title: 'Login failed',
+            variant: 'destructive',
+            description: 'Invalid email or password. Please try again',
+          })
+        })
+    } catch (err) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: 'Invalid email or password. Please try again',
+      })
+      console.log('Login error: ', err)
+    }
   }
 
   return (
