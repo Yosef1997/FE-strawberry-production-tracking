@@ -11,123 +11,18 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-// import { useSearchParams } from 'next/navigation'
-import AlertHandler from '@/components/AlertHandler'
 import ErrorAlert from './_components/ErrorAlert'
+import useDashboard from '@/hooks/use-dashboard'
 
-interface HourlyAccumulationPIC {
-  picName: string
-  hour: string
-  totalQuantity: number
-}
-
-interface HourlyAccumulationPack {
-  packType: string
-  hour: string
-  quantity: number
-}
-
-interface ProductivityMetric {
-  picName: string
-  hourlyProductivity: number
-  dailyProductivity: number
-  date: string
-}
-
-interface RejectRatio {
-  timeFrame: string
-  rejectRatio: number
-  hourly: boolean
-}
-
-interface PackRatio {
-  timeFrame: string
-  packARatio: number
-  packBRatio: number
-  packCRatio: number
-  hourly: boolean
-}
 export default function Home() {
-  // Data PIC
-  const picData: HourlyAccumulationPIC[] = [
-    { picName: 'Andri', hour: '2025-02-10T00:00:00', totalQuantity: 99 },
-    { picName: 'Andri', hour: '2025-02-09T23:00:00', totalQuantity: 893 },
-    { picName: 'Indri', hour: '2025-02-10T00:00:00', totalQuantity: 90 },
-    { picName: 'Indri', hour: '2025-02-09T23:00:00', totalQuantity: 870 },
-    { picName: 'Indra', hour: '2025-02-10T00:00:00', totalQuantity: 92 },
-    { picName: 'Indra', hour: '2025-02-09T23:00:00', totalQuantity: 875 },
-  ]
+  const { result, loading, error } = useDashboard()
 
-  // Data Pack
-  const packData: HourlyAccumulationPack[] = [
-    { packType: 'A', hour: '2025-02-10T00:00:00', quantity: 134 },
-    { packType: 'B', hour: '2025-02-10T00:00:00', quantity: 82 },
-    { packType: 'C', hour: '2025-02-10T00:00:00', quantity: 65 },
-    { packType: 'A', hour: '2025-02-09T23:00:00', quantity: 1233 },
-    { packType: 'B', hour: '2025-02-09T23:00:00', quantity: 782 },
-    { packType: 'C', hour: '2025-02-09T23:00:00', quantity: 623 },
-  ]
-
-  // Data Productivity
-  const productivityData: ProductivityMetric[] = [
-    {
-      picName: 'Indra',
-      hourlyProductivity: 16.116666666666667,
-      dailyProductivity: 1.6116666666666666,
-      date: '2025-02-09T07:00:00',
-    },
-    {
-      picName: 'Andri',
-      hourlyProductivity: 16.533333333333335,
-      dailyProductivity: 1.6533333333333333,
-      date: '2025-02-09T07:00:00',
-    },
-    {
-      picName: 'Indri',
-      hourlyProductivity: 16.0,
-      dailyProductivity: 1.6,
-      date: '2025-02-09T07:00:00',
-    },
-  ]
-
-  // Data Reject Ratio
-  const rejectRatioData: RejectRatio[] = [
-    { timeFrame: '2025-02-09T00:00:00', rejectRatio: 3.25, hourly: true },
-    { timeFrame: '2025-02-09T23:00:00', rejectRatio: 3.71, hourly: true },
-  ]
-
-  // Data Pack Ratio
-  const packRatioData: PackRatio[] = [
-    {
-      timeFrame: '2025-02-09T00:00:00',
-      packARatio: 47.69,
-      packBRatio: 29.18,
-      packCRatio: 23.13,
-      hourly: true,
-    },
-    {
-      timeFrame: '2025-02-09T23:00:00',
-      packARatio: 46.74,
-      packBRatio: 29.64,
-      packCRatio: 23.62,
-      hourly: true,
-    },
-  ]
-
-  // Format timestamp to readable hour
   const formatHour = (timestamp: string) => {
     return new Date(timestamp).getHours() + ':00'
   }
-  // const searchParams = useSearchParams()
-  // const errorAuth = searchParams.get('error')
 
   return (
-    <div className='space-y-8'>
-      {/* {errorAuth && (
-        <div className='p-4 w-full'>
-          <AlertHandler />
-        </div>
-      )} */}
+    <div className='space-y-8 p-4'>
       <Suspense fallback={null}>
         <ErrorAlert />
       </Suspense>
@@ -139,7 +34,7 @@ export default function Home() {
         <CardContent>
           <div className='h-[400px]'>
             <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={picData}>
+              <BarChart data={result.hourlyAccumulationPerPIC}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='hour' tickFormatter={formatHour} />
                 <YAxis />
@@ -167,7 +62,7 @@ export default function Home() {
         <CardContent>
           <div className='h-[400px]'>
             <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={packData}>
+              <BarChart data={result.hourlyAccumulationPerPack}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='hour' tickFormatter={formatHour} />
                 <YAxis />
@@ -191,7 +86,7 @@ export default function Home() {
         <CardContent>
           <div className='h-[400px]'>
             <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={productivityData}>
+              <BarChart data={result.productivityMetrics}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='picName' />
                 <YAxis />
@@ -221,7 +116,7 @@ export default function Home() {
         <CardContent>
           <div className='h-[400px]'>
             <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={rejectRatioData}>
+              <BarChart data={result.rejectRatios}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='timeFrame' tickFormatter={formatHour} />
                 <YAxis />
@@ -248,7 +143,7 @@ export default function Home() {
         <CardContent>
           <div className='h-[400px]'>
             <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={packRatioData}>
+              <BarChart data={result.packRatios}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='timeFrame' tickFormatter={formatHour} />
                 <YAxis />
