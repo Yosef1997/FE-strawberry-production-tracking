@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   BarChart,
@@ -11,8 +11,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { useSearchParams } from 'next/navigation'
+// import { useSearchParams } from 'next/navigation'
 import AlertHandler from '@/components/AlertHandler'
+import ErrorAlert from './_components/ErrorAlert'
 
 interface HourlyAccumulationPIC {
   picName: string
@@ -117,16 +118,19 @@ export default function Home() {
   const formatHour = (timestamp: string) => {
     return new Date(timestamp).getHours() + ':00'
   }
-  const searchParams = useSearchParams()
-  const errorAuth = searchParams.get('error')
+  // const searchParams = useSearchParams()
+  // const errorAuth = searchParams.get('error')
 
   return (
     <div className='space-y-8'>
-      {errorAuth && (
+      {/* {errorAuth && (
         <div className='p-4 w-full'>
           <AlertHandler />
         </div>
-      )}
+      )} */}
+      <Suspense fallback={null}>
+        <ErrorAlert />
+      </Suspense>
       {/* PIC Accumulation Chart */}
       <Card>
         <CardHeader>

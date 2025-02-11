@@ -1,7 +1,7 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
@@ -21,33 +21,112 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import useReport, { reportReq } from '@/hooks/use-report'
+
+const PACK_WEIGHTS = {
+  A: 0.2,
+  B: 0.3,
+  C: 0.4,
+} as const
+
+const DEFAULT_VALUES = {
+  pic: null,
+  qtyPackA: 0,
+  qtyPackB: 0,
+  qtyPackC: 0,
+  reject: 0,
+} as const
 
 const productionSchema = z.object({
   pic: z.coerce.number().nullable(),
-  gross: z.coerce.number().positive('Berat Kotor must be a positive number'),
-  qtyPackA: z.coerce.number().positive('Qty Pack A must be a positive number'),
-  qtyPackB: z.coerce.number().positive('Qty Pack B must be a positive number'),
-  qtyPackC: z.coerce.number().positive('Qty Pack C must be a positive number'),
-  reject: z.coerce.number().nonnegative('Reject weight cannot be negative'),
+  qtyPackA: z.coerce
+    .number()
+    .nonnegative('Pack A quantity cannot be negative')
+    .default(0),
+  qtyPackB: z.coerce
+    .number()
+    .nonnegative('Pack B quantity cannot be negative')
+    .default(0),
+  qtyPackC: z.coerce
+    .number()
+    .nonnegative('Pack C quantity cannot be negative')
+    .default(0),
+  reject: z.coerce
+    .number()
+    .nonnegative('Reject weight cannot be negative')
+    .default(0),
 })
 
 type ProductionFormData = z.infer<typeof productionSchema>
 
+const calculateGrossWeight = (
+  qtyPackA: number | string,
+  qtyPackB: number | string,
+  qtyPackC: number | string,
+  reject: number | string
+): number => {
+  const packA = Number(qtyPackA || 0) * PACK_WEIGHTS.A
+  const packB = Number(qtyPackB || 0) * PACK_WEIGHTS.B
+  const packC = Number(qtyPackC || 0) * PACK_WEIGHTS.C
+  const rejectWeight = Number(reject || 0)
+
+  return Number((packA + packB + packC + rejectWeight).toFixed(2))
+}
+
+const GrossWeightDisplay = ({ control }: { control: any }) => {
+  const values = useWatch({
+    control,
+    defaultValue: { qtyPackA: 0, qtyPackB: 0, qtyPackC: 0, reject: 0 },
+  })
+
+  const grossWeight = calculateGrossWeight(
+    values.qtyPackA!,
+    values.qtyPackB!,
+    values.qtyPackC!,
+    values.reject!
+  )
+
+  return (
+    <FormItem>
+      <FormLabel>Total Gross Weight (kg)</FormLabel>
+      <FormControl>
+        <input
+          type='number'
+          className='w-full px-3 py-2 border rounded-md bg-gray-100'
+          disabled
+          value={grossWeight}
+        />
+      </FormControl>
+    </FormItem>
+  )
+}
+
 const Report = () => {
   const form = useForm<ProductionFormData>({
     resolver: zodResolver(productionSchema),
-    defaultValues: {
-      gross: 0,
-      qtyPackA: 0,
-      qtyPackB: 0,
-      qtyPackC: 0,
-      reject: 0,
-    },
+    defaultValues: DEFAULT_VALUES,
   })
+  const { handleCreateReport, loading } = useReport()
 
   function onSubmit(values: ProductionFormData) {
-    console.log(values)
-    form.reset({ pic: null })
+    const grossWeight = calculateGrossWeight(
+      values.qtyPackA,
+      values.qtyPackB,
+      values.qtyPackC,
+      values.reject
+    )
+
+    const request: reportReq = {
+      id: null,
+      userId: values.pic!,
+      grossStrawberryWeight: grossWeight,
+      packAQuantity: values.qtyPackA,
+      packBQuantity: values.qtyPackB,
+      packCQuantity: values.qtyPackC,
+      rejectWeight: values.reject,
+    }
+    handleCreateReport(request)
+    form.reset(DEFAULT_VALUES)
   }
 
   return (
@@ -89,48 +168,45 @@ const Report = () => {
               </FormItem>
             )}
           />
-          <FormFieldInput
-            control={form.control}
-            name='gross'
-            label='Berat Kotor Strawberry yang di pack (kg) per jam'
-            placeholder='Berat kotor'
-            type='number'
-          />
+
+          <GrossWeightDisplay control={form.control} />
+
           <FormFieldInput
             control={form.control}
             name='qtyPackA'
-            label='Jumlah Pack A per jam'
-            placeholder='Jumlah Pack A'
+            label={`Pack A Quantity (${PACK_WEIGHTS.A}kg each)`}
+            placeholder='Enter Pack A quantity'
             type='number'
           />
           <FormFieldInput
             control={form.control}
             name='qtyPackB'
-            label='Jumlah Pack B per jam'
-            placeholder='Jumlah Pack B'
+            label={`Pack B Quantity (${PACK_WEIGHTS.B}kg each)`}
+            placeholder='Enter Pack B quantity'
             type='number'
           />
           <FormFieldInput
             control={form.control}
             name='qtyPackC'
-            label='Jumlah Pack C per jam'
-            placeholder='Jumlah Pack C'
+            label={`Pack C Quantity (${PACK_WEIGHTS.C}kg each)`}
+            placeholder='Enter Pack C quantity'
             type='number'
           />
           <FormFieldInput
             control={form.control}
             name='reject'
-            label='Reject (kg) per jam'
-            placeholder='Berat reject'
+            label='Reject Weight (kg)'
+            placeholder='Enter reject weight'
             type='number'
           />
 
-          <Button type='submit' className='w-full'>
-            Submit
+          <Button type='submit' className='w-full' disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
           </Button>
         </form>
       </Form>
     </div>
   )
 }
+
 export default Report
