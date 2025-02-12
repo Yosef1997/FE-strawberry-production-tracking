@@ -1,6 +1,9 @@
+'use client'
+import { logOut } from '@/actions/auth'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -8,7 +11,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from './ui/sidebar'
-import { Home, Inbox, BookUser, LogIn } from 'lucide-react'
+import { Home, Inbox, BookUser, LogIn, LogOut } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const items = [
   {
@@ -34,6 +40,17 @@ const items = [
 ]
 
 const AppSidebar = () => {
+  const { status } = useSession()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logOut()
+    router.push('/login')
+  }
+
+  useEffect(() => {
+    console.log(status)
+  }, [])
   return (
     <Sidebar>
       <SidebarContent>
@@ -51,6 +68,12 @@ const AppSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuButton asChild>
+                <button onClick={handleLogout} className='flex items-center'>
+                  <LogOut />
+                  <span>Logout</span>
+                </button>
+              </SidebarMenuButton>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

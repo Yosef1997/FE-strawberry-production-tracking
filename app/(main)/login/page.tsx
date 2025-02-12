@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import FormFieldInput from '@/components/FormFieldInput'
 import { login } from '@/actions/auth'
 import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
 const loginSchema = z.object({
   username: z.string().min(4, {
@@ -25,6 +26,7 @@ const Login = () => {
       password: '',
     },
   })
+  const router = useRouter()
 
   function onSubmit(values: FormData) {
     console.log(values)
@@ -35,6 +37,7 @@ const Login = () => {
             description: 'Login success',
           })
           form.reset()
+          router.push('/')
         })
         .catch(() => {
           toast({
