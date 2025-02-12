@@ -5,9 +5,10 @@ export interface HourlyAccumulationPIC {
 }
 
 export interface HourlyAccumulationPack {
-  packType: string
   hour: string
-  quantity: number
+  packAQuantity: number
+  packBQuantity: number
+  packCQuantity: number
 }
 
 export interface ProductivityMetric {
