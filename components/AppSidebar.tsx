@@ -48,9 +48,6 @@ const AppSidebar = () => {
     router.push('/login')
   }
 
-  useEffect(() => {
-    console.log(status)
-  }, [])
   return (
     <Sidebar>
       <SidebarContent>
