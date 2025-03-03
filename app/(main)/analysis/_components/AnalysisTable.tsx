@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import useAnalysis from '@/hooks/use-analysis'
 import { ChevronRight, ChevronLeft, ArrowUp, ArrowDown } from 'lucide-react'
-import { WeatherData, WeatherResponse } from '@/utils/analysis'
+import { BestWeatherData, WeatherData, WeatherResponse } from '@/utils/analysis'
 
 const SORT_OPTIONS = [
   { key: 'yield', label: 'Yield' },
@@ -19,7 +19,7 @@ const SORT_OPTIONS = [
 ]
 
 const AnalysisTable: React.FC<{
-  bestWeather: WeatherData
+  bestWeather: BestWeatherData
 }> = ({ bestWeather }) => {
   const { data, loading, refetch } = useAnalysis()
   const [sortBy, setSortBy] = useState<string | null>()
