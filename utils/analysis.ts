@@ -4,8 +4,19 @@ export interface WeatherData {
   rainFall: number
   temperature: number
   totalYield: number
-  totalRejectDueToPest: number
-  totalRejectDueToDisease: number
+  rejectDueToPest: number
+  rejectDueToDisease: number
+  totalReject: number
+}
+
+export interface BestWeatherData {
+  weekNumber: number
+  humidity: number
+  rainFall: number
+  temperature: number
+  totalYield: number
+  totalRejectDueToPest?: number
+  totalRejectDueToDisease?: number
 }
 
 export interface SortInfo {

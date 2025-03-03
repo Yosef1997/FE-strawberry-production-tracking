@@ -21,7 +21,6 @@ const AlertDelete: React.FC<{ username: string; name: string }> = ({
 
   const onDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    console.log('delete', username)
     setOpen(false)
   }
   return (

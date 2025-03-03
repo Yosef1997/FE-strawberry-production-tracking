@@ -18,7 +18,7 @@ const useChart = () => {
         ?.split('=')[1]
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/analysis?size=52`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/analysis/weather?size=52`,
         {
           headers: {
             'Content-Type': 'application/json',

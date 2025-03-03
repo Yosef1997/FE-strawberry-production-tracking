@@ -29,7 +29,6 @@ const Login = () => {
   const router = useRouter()
 
   function onSubmit(values: FormData) {
-    console.log(values)
     try {
       login(values)
         .then(() => {

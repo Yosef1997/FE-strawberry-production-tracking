@@ -63,13 +63,19 @@ const AnalysisChart = () => {
               />
               <Line
                 type='monotone'
-                dataKey='totalRejectDueToPest'
+                dataKey='totalReject'
+                stroke='blue'
+                strokeWidth={2}
+              />
+              <Line
+                type='monotone'
+                dataKey='rejectDueToPest'
                 stroke='#d62728'
                 strokeWidth={2}
               />
               <Line
                 type='monotone'
-                dataKey='totalRejectDueToDisease'
+                dataKey='rejectDueToDisease'
                 stroke='#2ca02c'
                 strokeWidth={2}
               />

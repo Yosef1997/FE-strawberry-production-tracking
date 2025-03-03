@@ -1,5 +1,5 @@
 'use client'
-import { WeatherData, WeatherResponse } from '@/utils/analysis'
+import { BestWeatherData, WeatherResponse } from '@/utils/analysis'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from './use-toast'
@@ -15,7 +15,7 @@ interface QueryParams {
 
 const useAnalysis = (initialParams: QueryParams = {}) => {
   const [data, setData] = useState<WeatherResponse | null>(null)
-  const [bestWeather, setBestWeather] = useState<WeatherData | null>(null)
+  const [bestWeather, setBestWeather] = useState<BestWeatherData | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | unknown>()
   const router = useRouter()
@@ -43,7 +43,7 @@ const useAnalysis = (initialParams: QueryParams = {}) => {
         ?.split('=')[1]
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/analysis?${queryString}`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/analysis/weather?${queryString}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -11,7 +11,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from './ui/sidebar'
-import { Home, Inbox, BookUser, LogIn, LogOut } from 'lucide-react'
+import {
+  Home,
+  Inbox,
+  BookUser,
+  LogIn,
+  LogOut,
+  ChartNoAxesCombined,
+} from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -31,6 +38,11 @@ const items = [
     title: 'PIC',
     url: '/pic',
     icon: BookUser,
+  },
+  {
+    title: 'Analysis',
+    url: '/analysis',
+    icon: ChartNoAxesCombined,
   },
   {
     title: 'Login',
